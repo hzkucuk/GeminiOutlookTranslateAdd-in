@@ -316,10 +316,10 @@ namespace GeminiOutlookTranslateAdd_in
         /// Sadece Türkçe imla düzeltmesi yapar (noktalama + yazım hatası).
         /// Çeviri yapmaz, sadece düzeltir.
         /// </summary>
-        private async Task<string> FixTurkishSpellingAsync(string text)
+        private async Task<string> FixTurkishSpellingAsync(string text, System.Threading.CancellationToken cancellationToken = default)
         {
             Debug.WriteLine("[FixTurkishSpellingAsync] Başladı");
-            
+
             string instruction = 
                 "Görev: Aşağıdaki Türkçe metindeki yazım hatalarını düzelt ve noktalama işaretlerini ekle.\n" +
                 "\n" +
@@ -340,7 +340,7 @@ namespace GeminiOutlookTranslateAdd_in
                 "- Kısaltmaları (CEO, API, HZK) değiştirme\n" +
                 "- {{PLACEHOLDER_0}} gibi yerleri olduğu gibi bırak";
 
-            string response = await SendTranslationRequestAsync(text, instruction);
+            string response = await SendTranslationRequestAsync(text, instruction, cancellationToken);
             
             if (response.StartsWith("HATA"))
             {
@@ -373,7 +373,7 @@ namespace GeminiOutlookTranslateAdd_in
             return !NonTranslatableParents.Contains(parent.Name);
         }
 
-        private async Task<string> TranslateHtmlBodyAsync(string html, string sourceLanguage, string targetLanguage)
+        private async Task<string> TranslateHtmlBodyAsync(string html, string sourceLanguage, string targetLanguage, System.Threading.CancellationToken cancellationToken = default)
         {
             Debug.WriteLine("[TranslateHtmlBodyAsync] Başladı");
             var doc = new HtmlDocument();
@@ -473,9 +473,7 @@ namespace GeminiOutlookTranslateAdd_in
                   $"10. NEVER use profanity or offensive language\n" +
                   $"11. Keep proper nouns and names unchanged";
 
-            string response = await SendTranslationRequestAsync(textToProcess, instruction);
-            
-            Debug.WriteLine($"[TranslateHtmlBodyAsync] API yanıtı: {(response.StartsWith("HATA") ? response.Substring(0, Math.Min(100, response.Length)) : "OK, uzunluk: " + response.Length)}");
+            string response = await SendTranslationRequestAsync(textToProcess, instruction, cancellationToken);
             
             if (response.StartsWith("HATA"))
             {
@@ -519,11 +517,13 @@ namespace GeminiOutlookTranslateAdd_in
             return result;
         }
 
-        private async Task<string> SendTranslationRequestAsync(string textToTranslate, string instruction)
+        private async Task<string> SendTranslationRequestAsync(string textToTranslate, string instruction, System.Threading.CancellationToken cancellationToken = default)
         {
             Debug.WriteLine("[SendTranslationRequestAsync] Başladı");
             try
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 string apiKey = LoadEncryptedApiKey();
                 
                 if (string.IsNullOrWhiteSpace(apiKey))
@@ -576,6 +576,8 @@ namespace GeminiOutlookTranslateAdd_in
                 }
 
                 Debug.WriteLine("[SendTranslationRequestAsync] Yanıt bekleniyor...");
+
+                cancellationToken.ThrowIfCancellationRequested();
                 
                 using (var response = await request.GetResponseAsync())
                 using (var streamReader = new System.IO.StreamReader(response.GetResponseStream()))
@@ -625,9 +627,11 @@ namespace GeminiOutlookTranslateAdd_in
             }
             catch (System.Exception ex)
             {
+                string correlationId = Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper();
+                Debug.WriteLine($"[btnTranslate_Click] Kritik hata [{correlationId}]: {ex}");
                 System.Windows.Forms.MessageBox.Show(
-                    $"btnTranslate_Click içinde kritik hata:\n\n{ex.GetType().Name}\n{ex.Message}\n\nStackTrace:\n{ex.StackTrace}",
-                    "Kritik Hata",
+                    $"Çeviri sırasında beklenmeyen bir hata oluştu.\n\nHata Kodu: {correlationId}\nLütfen tekrar deneyin.",
+                    "Hata",
                     System.Windows.Forms.MessageBoxButtons.OK,
                     System.Windows.Forms.MessageBoxIcon.Error);
             }
@@ -641,9 +645,11 @@ namespace GeminiOutlookTranslateAdd_in
             }
             catch (System.Exception ex)
             {
+                string correlationId = Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper();
+                Debug.WriteLine($"[btnTranslateToTurkish_Click] Kritik hata [{correlationId}]: {ex}");
                 System.Windows.Forms.MessageBox.Show(
-                    $"btnTranslateToTurkish_Click içinde kritik hata:\n\n{ex.GetType().Name}\n{ex.Message}\n\nStackTrace:\n{ex.StackTrace}",
-                    "Kritik Hata",
+                    $"Çeviri sırasında beklenmeyen bir hata oluştu.\n\nHata Kodu: {correlationId}\nLütfen tekrar deneyin.",
+                    "Hata",
                     System.Windows.Forms.MessageBoxButtons.OK,
                     System.Windows.Forms.MessageBoxIcon.Error);
             }
@@ -741,12 +747,12 @@ namespace GeminiOutlookTranslateAdd_in
                     Debug.WriteLine($"[TranslateCurrentMailAsync] Çeviri başlatılıyor: {sourceLanguage} -> {targetLanguage}");
                     
                     string translatedText = isHtmlBody
-                        ? await TranslateHtmlBodyAsync(originalBody, sourceLanguage, targetLanguage)
-                        : await TranslateTextAsync(originalBody, sourceLanguage, targetLanguage, false);
+                        ? await TranslateHtmlBodyAsync(originalBody, sourceLanguage, targetLanguage, localCancellationSource.Token)
+                        : await TranslateTextAsync(originalBody, sourceLanguage, targetLanguage, false, localCancellationSource.Token);
 
                     Debug.WriteLine($"[TranslateCurrentMailAsync] Çeviri tamamlandı, sonuç uzunluğu: {translatedText?.Length ?? 0}");
 
-                    if (translatedText.StartsWith("HATA"))
+                    if (string.IsNullOrEmpty(translatedText) || translatedText.StartsWith("HATA"))
                     {
                         Debug.WriteLine($"[TranslateCurrentMailAsync] Çeviri hatası: {translatedText}");
                         System.Windows.Forms.MessageBox.Show("Çeviri başarısız oldu: " + translatedText);
@@ -786,7 +792,7 @@ namespace GeminiOutlookTranslateAdd_in
                         localCancellationSource.Token.ThrowIfCancellationRequested();
                         
                         // Subject çevirisi (imla düzeltmesi dahil)
-                        string translatedSubject = await TranslateTextAsync(oldSubject, sourceLanguage, targetLanguage, false);
+                        string translatedSubject = await TranslateTextAsync(oldSubject, sourceLanguage, targetLanguage, false, localCancellationSource.Token);
                         if (!translatedSubject.StartsWith("HATA"))
                         {
                             finalSubject = translatedSubject;
@@ -817,12 +823,11 @@ namespace GeminiOutlookTranslateAdd_in
             }
             catch (System.Exception ex)
             {
+                string correlationId = Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper();
+                Debug.WriteLine($"[TranslateCurrentMailAsync] Beklenmeyen hata [{correlationId}]: {ex}");
                 System.Windows.Forms.MessageBox.Show(
-                    $"TranslateCurrentMailAsync içinde beklenmeyen hata:\n\n" +
-                    $"Tip: {ex.GetType().Name}\n" +
-                    $"Mesaj: {ex.Message}\n\n" +
-                    $"StackTrace:\n{ex.StackTrace}",
-                    "Kritik Hata",
+                    $"Çeviri sırasında beklenmeyen bir hata oluştu.\n\nHata Kodu: {correlationId}\nLütfen tekrar deneyin.",
+                    "Hata",
                     System.Windows.Forms.MessageBoxButtons.OK,
                     System.Windows.Forms.MessageBoxIcon.Error);
             }
@@ -846,10 +851,10 @@ namespace GeminiOutlookTranslateAdd_in
         // Gemini AI API istemcisi
         private async Task<string> TranslateTextAsync(string textToTranslate, string sourceLanguage, string targetLanguage)
         {
-            return await TranslateTextAsync(textToTranslate, sourceLanguage, targetLanguage, true);
+            return await TranslateTextAsync(textToTranslate, sourceLanguage, targetLanguage, true, System.Threading.CancellationToken.None);
         }
 
-        private async Task<string> TranslateTextAsync(string textToTranslate, string sourceLanguage, string targetLanguage, bool isHtml)
+        private async Task<string> TranslateTextAsync(string textToTranslate, string sourceLanguage, string targetLanguage, bool isHtml, System.Threading.CancellationToken cancellationToken = default)
         {
             // İmzaları ve kısaltmaları korumak için maskeleme
             var maskResult = MaskSignaturesAndAbbreviations(textToTranslate);
@@ -894,7 +899,7 @@ namespace GeminiOutlookTranslateAdd_in
                       $"DO NOT translate placeholders like {{PLACEHOLDER_0}}. " +
                       $"NEVER use profanity or offensive language.");
 
-            string translated = await SendTranslationRequestAsync(maskedText, instruction);
+            string translated = await SendTranslationRequestAsync(maskedText, instruction, cancellationToken);
             
             // Placeholder'ları geri yerleştir
             translated = RestorePlaceholders(translated, placeholders);

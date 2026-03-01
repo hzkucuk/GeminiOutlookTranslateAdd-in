@@ -5,6 +5,18 @@ Format [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) standardina uygu
 
 ---
 
+## [1.4.0] - 2025-07-25
+
+### Duzeltmeler
+- **Guvenlik:** Kullaniciya stack trace gosterilmiyordu, correlation ID ile degistirildi
+- **CancellationToken:** Iptal butonu artik HTTP istegini de durduruyor (tum alt cagrilara iletiliyor)
+- **NullReferenceException:** Ceviri sonucu null kontrolu eklendi
+
+### Etkilenen Dosyalar
+- `GeminiOutlookTranslateAdd-in/RibbonCeviri.cs`
+
+---
+
 ## [1.3.1] - 2025-07-25
 
 ### Duzeltmeler
