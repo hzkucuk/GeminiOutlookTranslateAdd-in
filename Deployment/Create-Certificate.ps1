@@ -1,8 +1,8 @@
 # =====================================================
 # Create Self-Signed Certificate for Code Signing
 # =====================================================
-# Bu script kod imzalama sertifikasý oluþturur
-# GELÝÞTÝRÝCÝ makinesinde YÖNETÝCÝ olarak çalýþtýrýn!
+# Bu script kod imzalama sertifikasÄ± oluÅŸturur
+# GELÄ°ÅžTÄ°RÄ°CÄ° makinesinde YÃ–NETÄ°CÄ° olarak Ã§alÄ±ÅŸtÄ±rÄ±n!
 # =====================================================
 
 param(
@@ -32,19 +32,19 @@ function Test-IsAdmin {
 
 Show-Banner
 
-# Admin kontrolü
+# Admin kontrolÃ¼
 if (-not (Test-IsAdmin)) {
-    Write-Host "??  UYARI: Bu script YÖNETÝCÝ yetkisi gerektirir!" -ForegroundColor Red
-    Write-Host "PowerShell'i 'Yönetici olarak çalýþtýr' ile açýn." -ForegroundColor Yellow
+    Write-Host "??  UYARI: Bu script YÃ–NETÄ°CÄ° yetkisi gerektirir!" -ForegroundColor Red
+    Write-Host "PowerShell'i 'YÃ¶netici olarak Ã§alÄ±ÅŸtÄ±r' ile aÃ§Ä±n." -ForegroundColor Yellow
     exit 1
 }
 
-Write-Host "?? Self-Signed Code Signing Certificate oluþturuluyor..." -ForegroundColor Yellow
+Write-Host "?? Self-Signed Code Signing Certificate oluÅŸturuluyor..." -ForegroundColor Yellow
 Write-Host ""
 
 try {
-    # Sertifika oluþtur
-    Write-Host "[1/4] Sertifika oluþturuluyor..." -ForegroundColor Cyan
+    # Sertifika oluÅŸtur
+    Write-Host "[1/4] Sertifika oluÅŸturuluyor..." -ForegroundColor Cyan
     $cert = New-SelfSignedCertificate `
         -Type CodeSigningCert `
         -Subject "CN=$CertName" `
@@ -58,16 +58,16 @@ try {
     Write-Host "   ? Expires: $($cert.NotAfter.ToString('yyyy-MM-dd'))" -ForegroundColor Green
     Write-Host ""
     
-    # Output klasörü oluþtur
-    Write-Host "[2/4] Output klasörü hazýrlanýyor..." -ForegroundColor Cyan
+    # Output klasÃ¶rÃ¼ oluÅŸtur
+    Write-Host "[2/4] Output klasÃ¶rÃ¼ hazÄ±rlanÄ±yor..." -ForegroundColor Cyan
     if (-not (Test-Path $OutputPath)) {
         New-Item -ItemType Directory -Path $OutputPath -Force | Out-Null
     }
     Write-Host "   ? $OutputPath" -ForegroundColor Green
     Write-Host ""
     
-    # PFX olarak dýþa aktar
-    Write-Host "[3/4] PFX dosyasý oluþturuluyor..." -ForegroundColor Cyan
+    # PFX olarak dÄ±ÅŸa aktar
+    Write-Host "[3/4] PFX dosyasÄ± oluÅŸturuluyor..." -ForegroundColor Cyan
     $pfxPath = Join-Path $OutputPath "ZaferBilgisayar-CodeSigning.pfx"
     $pfxPassword = ConvertTo-SecureString -String $Password -Force -AsPlainText
     
@@ -80,16 +80,16 @@ try {
     Write-Host "   ?? Password: $Password" -ForegroundColor Yellow
     Write-Host ""
     
-    # CER olarak da dýþa aktar (public key)
-    Write-Host "[4/4] CER dosyasý oluþturuluyor (public key)..." -ForegroundColor Cyan
+    # CER olarak da dÄ±ÅŸa aktar (public key)
+    Write-Host "[4/4] CER dosyasÄ± oluÅŸturuluyor (public key)..." -ForegroundColor Cyan
     $cerPath = Join-Path $OutputPath "ZaferBilgisayar-CodeSigning.cer"
     Export-Certificate -Cert $cert -FilePath $cerPath | Out-Null
     Write-Host "   ? CER: $cerPath" -ForegroundColor Green
     Write-Host ""
     
-    # Özet bilgi
+    # Ã–zet bilgi
     Write-Host "========================================================" -ForegroundColor Cyan
-    Write-Host "?? BAÞARILI! Sertifika oluþturuldu." -ForegroundColor Green
+    Write-Host "?? BAÅžARILI! Sertifika oluÅŸturuldu." -ForegroundColor Green
     Write-Host "========================================================" -ForegroundColor Cyan
     Write-Host ""
     Write-Host "DOSYALAR:" -ForegroundColor Yellow
@@ -98,43 +98,51 @@ try {
     Write-Host ""
     Write-Host "SONRAKI ADIMLAR:" -ForegroundColor Yellow
     Write-Host ""
-    Write-Host "  [A] GELÝÞTÝRÝCÝ MAKÝNESÝNDE (Visual Studio):" -ForegroundColor Cyan
-    Write-Host "      1. Solution Explorer ? Proje sað týk ? Properties" -ForegroundColor Gray
+    Write-Host "  [A] GELÄ°ÅžTÄ°RÄ°CÄ° MAKÄ°NESÄ°NDE (Visual Studio):" -ForegroundColor Cyan
+    Write-Host "      1. Solution Explorer ? Proje saÄŸ tÄ±k ? Properties" -ForegroundColor Gray
     Write-Host "      2. Signing sekmesi" -ForegroundColor Gray
     Write-Host "      3. ? Sign the ClickOnce manifests" -ForegroundColor Gray
     Write-Host "      4. Select from File ? $pfxPath" -ForegroundColor Gray
     Write-Host "      5. Password: $Password" -ForegroundColor Gray
     Write-Host "      6. Publish!" -ForegroundColor Gray
     Write-Host ""
-    Write-Host "  [B] HEDEF MAKÝNELERDE:" -ForegroundColor Cyan
-    Write-Host "      Seçenek 1: PowerShell (Yönetici) ile:" -ForegroundColor Gray
+    Write-Host "  [B] HEDEF MAKÄ°NELERDE:" -ForegroundColor Cyan
+    Write-Host "      SeÃ§enek 1: PowerShell (YÃ¶netici) ile:" -ForegroundColor Gray
     Write-Host "         Import-PfxCertificate -FilePath '$pfxPath' \" -ForegroundColor DarkGray
     Write-Host "           -CertStoreLocation Cert:\LocalMachine\Root \" -ForegroundColor DarkGray
     Write-Host "           -Password (ConvertTo-SecureString '$Password' -AsPlainText -Force)" -ForegroundColor DarkGray
     Write-Host ""
-    Write-Host "      Seçenek 2: Manuel:" -ForegroundColor Gray
-    Write-Host "         - ZaferBilgisayar-CodeSigning.cer'e çift týkla" -ForegroundColor DarkGray
+    Write-Host "      SeÃ§enek 2: Manuel:" -ForegroundColor Gray
+    Write-Host "         - ZaferBilgisayar-CodeSigning.cer'e Ã§ift tÄ±kla" -ForegroundColor DarkGray
     Write-Host "         - 'Install Certificate...' ? Local Machine" -ForegroundColor DarkGray
-    Write-Host "         - 'Place all certificates in: Trusted Root...' seç" -ForegroundColor DarkGray
+    Write-Host "         - 'Place all certificates in: Trusted Root...' seÃ§" -ForegroundColor DarkGray
     Write-Host ""
     Write-Host "========================================================" -ForegroundColor Cyan
     Write-Host ""
-    Write-Host "??  GÜVENLÝK NOTU:" -ForegroundColor Red
-    Write-Host "   - PFX dosyasýný GÜVENLÝ bir yerde saklayýn!" -ForegroundColor Yellow
-    Write-Host "   - Password'u paylaþmayýn!" -ForegroundColor Yellow
-    Write-Host "   - CER dosyasýný hedef makinelere daðýtabilirsiniz" -ForegroundColor Green
+    Write-Host "??  GÃœVENLÄ°K NOTU:" -ForegroundColor Red
+    Write-Host "   - PFX dosyasÄ±nÄ± GÃœVENLÄ° bir yerde saklayÄ±n!" -ForegroundColor Yellow
+    Write-Host "   - Password'u paylaÅŸmayÄ±n!" -ForegroundColor Yellow
+    Write-Host "   - CER dosyasÄ±nÄ± hedef makinelere daÄŸÄ±tabilirsiniz" -ForegroundColor Green
     Write-Host ""
     
-    # Sertifikayý Trusted Root'a da ekle (bu makine için)
-    Write-Host "Bu makinede sertifikayý Trusted Root'a eklemek ister misiniz? (Y/N)" -ForegroundColor Cyan
+    # SertifikayÄ± Trusted Root + Trusted Publishers'a ekle (bu makine iÃ§in)
+    Write-Host "Bu makinede sertifikayÄ± guvenilir listeye eklemek ister misiniz? (Y/N)" -ForegroundColor Cyan
     $addToRoot = Read-Host
-    
+
     if ($addToRoot -eq "Y" -or $addToRoot -eq "y") {
         Write-Host "Trusted Root'a ekleniyor..." -ForegroundColor Yellow
         Import-PfxCertificate -FilePath $pfxPath `
             -CertStoreLocation Cert:\LocalMachine\Root `
             -Password $pfxPassword | Out-Null
-        Write-Host "? Bu makinede güvenilir sertifika listesine eklendi!" -ForegroundColor Green
+        Write-Host "   Trusted Root'a eklendi!" -ForegroundColor Green
+
+        Write-Host "Trusted Publishers'a ekleniyor..." -ForegroundColor Yellow
+        Import-PfxCertificate -FilePath $pfxPath `
+            -CertStoreLocation Cert:\LocalMachine\TrustedPublisher `
+            -Password $pfxPassword | Out-Null
+        Write-Host "   Trusted Publishers'a eklendi!" -ForegroundColor Green
+        Write-Host ""
+        Write-Host "ClickOnce imza uyarisi artik gorunmeyecek!" -ForegroundColor Green
     }
     
 }
@@ -146,4 +154,4 @@ catch {
 }
 
 Write-Host ""
-Read-Host "Çýkmak için Enter'a basýn"
+Read-Host "Ã‡Ä±kmak iÃ§in Enter'a basÄ±n"

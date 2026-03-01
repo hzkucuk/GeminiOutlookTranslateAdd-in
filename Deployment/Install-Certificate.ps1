@@ -1,8 +1,8 @@
 # =====================================================
 # Install Certificate on Target Machine
 # =====================================================
-# Bu script sertifikayý hedef makineye yükler
-# HEDEF MAKÝNEDE YÖNETÝCÝ olarak çalýþtýrýn!
+# Bu script sertifikayÄ± hedef makineye yÃ¼kler
+# HEDEF MAKÄ°NEDE YÃ–NETÄ°CÄ° olarak Ã§alÄ±ÅŸtÄ±rÄ±n!
 # =====================================================
 
 param(
@@ -31,37 +31,37 @@ function Test-IsAdmin {
 
 Show-Banner
 
-# Admin kontrolü
+# Admin kontrolÃ¼
 if (-not (Test-IsAdmin)) {
-    Write-Host "??  UYARI: Bu script YÖNETÝCÝ yetkisi gerektirir!" -ForegroundColor Red
-    Write-Host "PowerShell'i 'Yönetici olarak çalýþtýr' ile açýn." -ForegroundColor Yellow
+    Write-Host "??  UYARI: Bu script YÃ–NETÄ°CÄ° yetkisi gerektirir!" -ForegroundColor Red
+    Write-Host "PowerShell'i 'YÃ¶netici olarak Ã§alÄ±ÅŸtÄ±r' ile aÃ§Ä±n." -ForegroundColor Yellow
     exit 1
 }
 
-# Cert path kontrolü
+# Cert path kontrolÃ¼
 if ([string]::IsNullOrWhiteSpace($CertPath)) {
-    Write-Host "Sertifika dosyasýný seçin:" -ForegroundColor Yellow
-    Write-Host "  1. ZaferBilgisayar-CodeSigning.pfx (Private - þifre gerekli)" -ForegroundColor Gray
-    Write-Host "  2. ZaferBilgisayar-CodeSigning.cer (Public - þifre gerekmez)" -ForegroundColor Gray
+    Write-Host "Sertifika dosyasÄ±nÄ± seÃ§in:" -ForegroundColor Yellow
+    Write-Host "  1. ZaferBilgisayar-CodeSigning.pfx (Private - ÅŸifre gerekli)" -ForegroundColor Gray
+    Write-Host "  2. ZaferBilgisayar-CodeSigning.cer (Public - ÅŸifre gerekmez)" -ForegroundColor Gray
     Write-Host ""
     
     Add-Type -AssemblyName System.Windows.Forms
     $openFileDialog = New-Object System.Windows.Forms.OpenFileDialog
     $openFileDialog.Filter = "Certificate Files (*.pfx;*.cer)|*.pfx;*.cer|All Files (*.*)|*.*"
-    $openFileDialog.Title = "Sertifika Dosyasýný Seçin"
+    $openFileDialog.Title = "Sertifika DosyasÄ±nÄ± SeÃ§in"
     
     if ($openFileDialog.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
         $CertPath = $openFileDialog.FileName
     }
     else {
-        Write-Host "? Sertifika dosyasý seçilmedi!" -ForegroundColor Red
+        Write-Host "? Sertifika dosyasÄ± seÃ§ilmedi!" -ForegroundColor Red
         exit 1
     }
 }
 
-# Dosya varlýk kontrolü
+# Dosya varlÄ±k kontrolÃ¼
 if (-not (Test-Path $CertPath)) {
-    Write-Host "? HATA: Sertifika dosyasý bulunamadý!" -ForegroundColor Red
+    Write-Host "? HATA: Sertifika dosyasÄ± bulunamadÄ±!" -ForegroundColor Red
     Write-Host "   Yol: $CertPath" -ForegroundColor Gray
     exit 1
 }
@@ -74,60 +74,83 @@ try {
     
     if ($fileExtension -eq ".pfx") {
         # PFX (Private Key)
-        Write-Host "?? PFX dosyasý tespit edildi (private key)" -ForegroundColor Yellow
+        Write-Host "?? PFX dosyasÄ± tespit edildi (private key)" -ForegroundColor Yellow
         Write-Host ""
         
-        # Þifre sor
+        # Åžifre sor
         if ([string]::IsNullOrWhiteSpace($Password)) {
-            $securePassword = Read-Host "PFX þifresini girin" -AsSecureString
+            $securePassword = Read-Host "PFX ÅŸifresini girin" -AsSecureString
         }
         else {
             $securePassword = ConvertTo-SecureString -String $Password -AsPlainText -Force
         }
         
-        Write-Host "Sertifika Trusted Root Certificate Authorities'e yükleniyor..." -ForegroundColor Yellow
-        
+        # 1) Trusted Root Certificate Authorities
+        Write-Host "[1/2] Sertifika Trusted Root Certificate Authorities'e yukleniyor..." -ForegroundColor Yellow
+
         Import-PfxCertificate `
             -FilePath $CertPath `
             -CertStoreLocation Cert:\LocalMachine\Root `
             -Password $securePassword `
             -Exportable | Out-Null
-        
-        Write-Host "? PFX sertifikasý baþarýyla yüklendi!" -ForegroundColor Green
+
+        Write-Host "   Trusted Root'a yuklendi!" -ForegroundColor Green
+
+        # 2) Trusted Publishers (ClickOnce uyarisi icin kritik)
+        Write-Host "[2/2] Sertifika Trusted Publishers'a yukleniyor..." -ForegroundColor Yellow
+
+        Import-PfxCertificate `
+            -FilePath $CertPath `
+            -CertStoreLocation Cert:\LocalMachine\TrustedPublisher `
+            -Password $securePassword `
+            -Exportable | Out-Null
+
+        Write-Host "   Trusted Publishers'a yuklendi!" -ForegroundColor Green
     }
     elseif ($fileExtension -eq ".cer") {
         # CER (Public Key)
-        Write-Host "?? CER dosyasý tespit edildi (public key)" -ForegroundColor Yellow
+        Write-Host "?? CER dosyasÄ± tespit edildi (public key)" -ForegroundColor Yellow
         Write-Host ""
-        Write-Host "Sertifika Trusted Root Certificate Authorities'e yükleniyor..." -ForegroundColor Yellow
-        
+        # 1) Trusted Root Certificate Authorities
+        Write-Host "[1/2] Sertifika Trusted Root Certificate Authorities'e yukleniyor..." -ForegroundColor Yellow
+
         Import-Certificate `
             -FilePath $CertPath `
             -CertStoreLocation Cert:\LocalMachine\Root | Out-Null
-        
-        Write-Host "? CER sertifikasý baþarýyla yüklendi!" -ForegroundColor Green
+
+        Write-Host "   Trusted Root'a yuklendi!" -ForegroundColor Green
+
+        # 2) Trusted Publishers (ClickOnce uyarisi icin kritik)
+        Write-Host "[2/2] Sertifika Trusted Publishers'a yukleniyor..." -ForegroundColor Yellow
+
+        Import-Certificate `
+            -FilePath $CertPath `
+            -CertStoreLocation Cert:\LocalMachine\TrustedPublisher | Out-Null
+
+        Write-Host "   Trusted Publishers'a yuklendi!" -ForegroundColor Green
     }
     else {
-        Write-Host "? HATA: Desteklenmeyen dosya formatý: $fileExtension" -ForegroundColor Red
-        Write-Host "   Sadece .pfx veya .cer dosyalarý desteklenir." -ForegroundColor Yellow
+        Write-Host "? HATA: Desteklenmeyen dosya formatÄ±: $fileExtension" -ForegroundColor Red
+        Write-Host "   Sadece .pfx veya .cer dosyalarÄ± desteklenir." -ForegroundColor Yellow
         exit 1
     }
     
     Write-Host ""
     Write-Host "========================================================" -ForegroundColor Cyan
-    Write-Host "?? BAÞARILI! Sertifika güvenilir listeye eklendi." -ForegroundColor Green
+    Write-Host "?? BAÅžARILI! Sertifika gÃ¼venilir listeye eklendi." -ForegroundColor Green
     Write-Host "========================================================" -ForegroundColor Cyan
     Write-Host ""
     Write-Host "SONRAKI ADIM:" -ForegroundColor Yellow
-    Write-Host "  1. setup.exe'yi çalýþtýrýn" -ForegroundColor Gray
-    Write-Host "  2. Kurulum artýk hatasýz tamamlanacak!" -ForegroundColor Gray
+    Write-Host "  1. setup.exe'yi Ã§alÄ±ÅŸtÄ±rÄ±n" -ForegroundColor Gray
+    Write-Host "  2. Kurulum artÄ±k hatasÄ±z tamamlanacak!" -ForegroundColor Gray
     Write-Host ""
-    Write-Host "NOT: Sertifika þu konumda:" -ForegroundColor Cyan
+    Write-Host "NOT: Sertifika su konumlarda:" -ForegroundColor Cyan
     Write-Host "  Cert:\LocalMachine\Root (Trusted Root Certificate Authorities)" -ForegroundColor Gray
+    Write-Host "  Cert:\LocalMachine\TrustedPublisher (Trusted Publishers)" -ForegroundColor Gray
     Write-Host ""
     
-    # Sertifika detaylarýný göster
-    Write-Host "Yüklenen sertifika detaylarý:" -ForegroundColor Cyan
+    # Sertifika detaylarÄ±nÄ± gÃ¶ster
+    Write-Host "YÃ¼klenen sertifika detaylarÄ±:" -ForegroundColor Cyan
     $loadedCert = Get-ChildItem Cert:\LocalMachine\Root | Where-Object { $_.Subject -like "*Zafer*" } | Select-Object -First 1
     if ($loadedCert) {
         Write-Host "  Subject: $($loadedCert.Subject)" -ForegroundColor Gray
@@ -140,13 +163,13 @@ catch {
     Write-Host ""
     Write-Host "? HATA: $($_.Exception.Message)" -ForegroundColor Red
     Write-Host ""
-    Write-Host "Olasý nedenler:" -ForegroundColor Yellow
-    Write-Host "  - Yanlýþ PFX þifresi" -ForegroundColor Gray
-    Write-Host "  - Bozuk sertifika dosyasý" -ForegroundColor Gray
+    Write-Host "OlasÄ± nedenler:" -ForegroundColor Yellow
+    Write-Host "  - YanlÄ±ÅŸ PFX ÅŸifresi" -ForegroundColor Gray
+    Write-Host "  - Bozuk sertifika dosyasÄ±" -ForegroundColor Gray
     Write-Host "  - Yetersiz yetki" -ForegroundColor Gray
     Write-Host ""
     exit 1
 }
 
 Write-Host ""
-Read-Host "Çýkmak için Enter'a basýn"
+Read-Host "Ã‡Ä±kmak iÃ§in Enter'a basÄ±n"

@@ -5,6 +5,23 @@ Format [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) standardina uygu
 
 ---
 
+## [1.3.1] - 2025-07-25
+
+### Duzeltmeler
+- **ClickOnce imza uyarisi** duzeltildi — sertifika artik hem Trusted Root hem Trusted Publishers store'a yukleniyor
+- `Install-Certificate.ps1` guncellendi: `Cert:\LocalMachine\TrustedPublisher` eklendi
+- `Create-Certificate.ps1` guncellendi: gelistirici makinesinde de TrustedPublisher'a yukleme
+
+### Eklenenler
+- `Kur-Sertifika-ve-Addin.bat` — son kullanicilar icin tek tikla sertifika + kurulum scripti
+
+### Etkilenen Dosyalar
+- `Deployment/Install-Certificate.ps1`
+- `Deployment/Create-Certificate.ps1`
+- `Deployment/Kur-Sertifika-ve-Addin.bat` (yeni)
+
+---
+
 ## [1.3.0] - 2025-07-25
 
 ### Eklenenler
