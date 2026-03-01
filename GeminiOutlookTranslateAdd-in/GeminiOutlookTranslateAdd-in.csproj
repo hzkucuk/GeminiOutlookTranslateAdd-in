@@ -31,7 +31,7 @@
     <ResolveComReferenceSilent>true</ResolveComReferenceSilent>
     <IsWebBootstrapper>False</IsWebBootstrapper>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <PublishUrl>m:\Users\Hzk\Desktop\MUSTERILER\marmara\n8n\outlookext\</PublishUrl>
+    <PublishUrl>C:\Users\Hzk\source\repos\GeminiOutlookTranslateAdd-in\dist\</PublishUrl>
     <InstallUrl />
     <TargetCulture>en</TargetCulture>
     <ApplicationVersion>1.0.0.7</ApplicationVersion>
@@ -285,7 +285,6 @@
   <ItemGroup>
     <None Include="Resources\Gemini_Generated_Image_esfozfesfozfesfo.png" />
   </ItemGroup>
-
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
