@@ -1,0 +1,66 @@
+MIT Lisansı (MIT License)
+
+Telif Hakki (c) 2025 Zafer Bilgisayar
+
+Bu yazilimin ve ilgili dokumantasyon dosyalarinin ("Yazilim") bir kopyasini
+edinen herkese, asagidaki kosullar dahilinde, Yazilim uzerinde herhangi bir
+kisitlama olmaksizin islem yapma hakki ucretsiz olarak verilmektedir. Bu haklar;
+kullanma, kopyalama, degistirme, birlestirme, yayimlama, dagitma, alt lisans
+verme ve/veya Yazilimin kopyalarini satma haklarini ve Yazilimin temin edildigi
+kisilere ayni haklari tanimayi kapsar. Asagidaki kosullara tabidir:
+
+Yukaridaki telif hakki bildirimi ve bu izin bildirimi, Yazilimin tum kopyalarina
+veya onemli parcalarina dahil edilmelidir.
+
+YAZILIM "OLDUGU GIBI" SUNULMAKTADIR, TICARI ELVERISLILIK, BELIRLI BIR AMACA
+UYGUNLUK VE HAK IHLALI YAPILMAMASI DA DAHIL OLMAK UZERE, ACIK VEYA ZIMNI
+HICBIR GARANTI VERILMEMEKTEDIR. YAZARLAR VEYA TELIF HAKKI SAHIPLERI, YAZILIMDAN
+VEYA YAZILIMIN KULLANIMINDAN YA DA DIGER ISLEMLERDEN KAYNAKLANAN HICBIR TALEP,
+HASAR VEYA DIGER YUKUMLULUKTEN SORUMLU TUTULAMAZ.
+
+---
+
+MIT License
+
+Copyright (c) 2025 Zafer Bilgisayar
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+## Ucuncu Parti Bagimliliklar
+
+### HtmlAgilityPack
+- Lisans: MIT
+- Telif Hakki: Simon Mourrier, Jeff Klawiter, Stephan Grell
+- Web: https://html-agility-pack.net/
+
+### Newtonsoft.Json
+- Lisans: MIT
+- Telif Hakki: James Newton-King
+- Web: https://www.newtonsoft.com/json
+
+### Microsoft Office Interop (Office PIAs)
+- Lisans: Microsoft Yazilim Lisansi
+- Telif Hakki: Microsoft Corporation
+- Web: https://learn.microsoft.com/tr-tr/visualstudio/vsto/
+
+### Google Gemini API
+- API Kosullari: https://ai.google.dev/terms
+- Veri Kullanimi: https://support.google.com/gemini/answer/13594961
