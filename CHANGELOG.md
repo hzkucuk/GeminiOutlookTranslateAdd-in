@@ -5,6 +5,26 @@ Format [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) standardina uygu
 
 ---
 
+## [1.3.0] - 2025-07-25
+
+### Eklenenler
+- **Info (Bilgi) dugmesi** Ribbon toolbar'a eklendi — versiyon, gelistirici ve iletisim bilgilerini gosterir
+- Yeni Ribbon grubu: "Hakkinda" (group3)
+- `CreateInfoIcon()` metodu `RibbonIconHelper.cs`'e eklendi (mavi daire + beyaz "i" ikonu)
+- `btnInfo_Click` event handler ile bilgi penceresi (MessageBox)
+
+### Degistirilenler
+- `AssemblyInfo.cs` guncellendi: versiyon 1.3.0, firma "Zafer Bilgisayar", aciklama eklendi
+- Versiyon numarasi Assembly'den dinamik olarak okunuyor (hardcoded degil)
+
+### Etkilenen Dosyalar
+- `RibbonCeviri.Designer.cs` — group3 + btnInfo eklendi
+- `RibbonCeviri.cs` — btnInfo_Click handler + ikon atamasi
+- `RibbonIconHelper.cs` — CreateInfoIcon() metodu
+- `Properties/AssemblyInfo.cs` — meta veri guncellendi
+
+---
+
 ## [1.2.0] - 2025-03-01
 
 ### Eklenenler

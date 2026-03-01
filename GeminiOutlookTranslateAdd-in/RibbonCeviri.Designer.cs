@@ -1,4 +1,4 @@
-﻿namespace GeminiOutlookTranslateAdd_in
+namespace GeminiOutlookTranslateAdd_in
 {
     partial class RibbonCeviri : Microsoft.Office.Tools.Ribbon.RibbonBase
     {
@@ -43,9 +43,12 @@
             this.txtApiKey = this.Factory.CreateRibbonEditBox();
             this.btnSaveApiKey = this.Factory.CreateRibbonButton();
             this.lblApiKeyStatus = this.Factory.CreateRibbonLabel();
+            this.group3 = this.Factory.CreateRibbonGroup();
+            this.btnInfo = this.Factory.CreateRibbonButton();
             this.tab1.SuspendLayout();
             this.group1.SuspendLayout();
             this.group2.SuspendLayout();
+            this.group3.SuspendLayout();
             this.SuspendLayout();
             // 
             // tab1
@@ -53,6 +56,7 @@
             this.tab1.ControlId.ControlIdType = Microsoft.Office.Tools.Ribbon.RibbonControlIdType.Office;
             this.tab1.Groups.Add(this.group1);
             this.tab1.Groups.Add(this.group2);
+            this.tab1.Groups.Add(this.group3);
             this.tab1.Label = "TabAddIns";
             this.tab1.Name = "tab1";
             // 
@@ -121,6 +125,21 @@
             this.lblApiKeyStatus.Label = "";
             this.lblApiKeyStatus.Name = "lblApiKeyStatus";
             // 
+            // group3
+            // 
+            this.group3.Items.Add(this.btnInfo);
+            this.group3.Label = "Hakkında";
+            this.group3.Name = "group3";
+            // 
+            // btnInfo
+            // 
+            this.btnInfo.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+            this.btnInfo.Label = "Bilgi";
+            this.btnInfo.Name = "btnInfo";
+            this.btnInfo.ShowImage = true;
+            this.btnInfo.SuperTip = "Eklenti hakkında versiyon ve iletişim bilgilerini gösterir.";
+            this.btnInfo.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnInfo_Click);
+            // 
             // RibbonCeviri
             // 
             this.Name = "RibbonCeviri";
@@ -133,6 +152,8 @@
             this.group1.PerformLayout();
             this.group2.ResumeLayout(false);
             this.group2.PerformLayout();
+            this.group3.ResumeLayout(false);
+            this.group3.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -149,6 +170,8 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonEditBox txtApiKey;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton btnSaveApiKey;
         internal Microsoft.Office.Tools.Ribbon.RibbonLabel lblApiKeyStatus;
+        internal Microsoft.Office.Tools.Ribbon.RibbonGroup group3;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton btnInfo;
     }
 
     partial class ThisRibbonCollection

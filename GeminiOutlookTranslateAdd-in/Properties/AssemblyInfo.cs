@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -6,12 +6,12 @@ using System.Security;
 // Bir bütünleştirilmiş koda ilişkin Genel Bilgiler aşağıdaki öznitelikler kümesiyle
 // denetlenir. Bütünleştirilmiş kod ile ilişkili bilgileri değiştirmek için
 // bu öznitelik değerlerini değiştirin.
-[assembly: AssemblyTitle("GeminiOutlookTranslateAdd-in")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Gemini Outlook Translate Add-in")]
+[assembly: AssemblyDescription("Google Gemini AI destekli Outlook e-posta çeviri eklentisi")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("GeminiOutlookTranslateAdd-in")]
-[assembly: AssemblyCopyright("Copyright ©  2026")]
+[assembly: AssemblyCompany("Zafer Bilgisayar")]
+[assembly: AssemblyProduct("Gemini Outlook Translate Add-in")]
+[assembly: AssemblyCopyright("Copyright © 2026 Zafer Bilgisayar")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -33,6 +33,6 @@ using System.Security;
 // Değerlerin tümünü belirtebilir ya da Yapı ve Düzeltme Numaralarını aşağıda gösterildiği gibi 
 // '*' kullanarak varsayılana ayarlayabilirsiniz:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.3.0.0")]
+[assembly: AssemblyFileVersion("1.3.0.0")]
 

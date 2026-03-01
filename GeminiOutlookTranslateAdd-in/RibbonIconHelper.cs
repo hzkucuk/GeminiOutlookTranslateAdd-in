@@ -10,6 +10,36 @@ namespace GeminiOutlookTranslateAdd_in
         private static readonly Color EnglishBlue = Color.FromArgb(21, 101, 192);
         private static readonly Color StopRed = Color.FromArgb(198, 40, 40);
         private static readonly Color ArrowGray = Color.FromArgb(117, 117, 117);
+        private static readonly Color InfoBlue = Color.FromArgb(33, 150, 243);
+
+        public static Bitmap CreateInfoIcon()
+        {
+            var bmp = new Bitmap(32, 32);
+            using (var g = Graphics.FromImage(bmp))
+            {
+                g.SmoothingMode = SmoothingMode.AntiAlias;
+                g.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+                g.Clear(Color.Transparent);
+
+                using (var brush = new SolidBrush(InfoBlue))
+                {
+                    g.FillEllipse(brush, 2, 2, 28, 28);
+                }
+
+                var sf = new StringFormat
+                {
+                    Alignment = StringAlignment.Center,
+                    LineAlignment = StringAlignment.Center
+                };
+
+                using (var font = new Font("Segoe UI", 16f, FontStyle.Bold))
+                using (var brush = new SolidBrush(Color.White))
+                {
+                    g.DrawString("i", font, brush, new RectangleF(2, 3, 28, 28), sf);
+                }
+            }
+            return bmp;
+        }
 
         public static Bitmap CreateTrToEnIcon()
         {

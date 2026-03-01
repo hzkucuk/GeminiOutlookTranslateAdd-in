@@ -1,4 +1,4 @@
-﻿using Microsoft.Office.Tools.Ribbon;
+using Microsoft.Office.Tools.Ribbon;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,6 +67,7 @@ namespace GeminiOutlookTranslateAdd_in
                 btnTranslateToTurkish.Image = RibbonIconHelper.CreateEnToTrIcon();
                 btnCancelTranslation.Image = RibbonIconHelper.CreateStopIcon();
                 btnCancelTranslation.Label = "Durdur";
+                btnInfo.Image = RibbonIconHelper.CreateInfoIcon();
             }
             catch (System.Exception ex)
             {
@@ -75,6 +76,34 @@ namespace GeminiOutlookTranslateAdd_in
 
             UpdateApiKeyStatus();
         }
+
+        #region Hakkında
+
+        private void btnInfo_Click(object sender, RibbonControlEventArgs e)
+        {
+            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            var version = assembly.GetName().Version;
+
+            string info =
+                "Gemini Outlook Translate Add-in\n" +
+                "─────────────────────────────\n\n" +
+                $"Versiyon: {version.Major}.{version.Minor}.{version.Build}\n" +
+                "Geliştirici: Zafer Bilgisayar\n" +
+                "E-posta: hzkucuk@hotmail.com\n" +
+                "GitHub: github.com/hzkucuk/GeminiOutlookTranslateAdd-in\n\n" +
+                "Google Gemini AI destekli Outlook e-posta çeviri eklentisi.\n" +
+                "Türkçe ↔ İngilizce otomatik çeviri, imla düzeltme ve\n" +
+                "noktalama ekleme özellikleri sunar.\n\n" +
+                "© 2026 Zafer Bilgisayar - Tüm hakları saklıdır.";
+
+            System.Windows.Forms.MessageBox.Show(
+                info,
+                "Hakkında - Gemini Translate",
+                System.Windows.Forms.MessageBoxButtons.OK,
+                System.Windows.Forms.MessageBoxIcon.Information);
+        }
+
+        #endregion
 
         #region API Key Yönetimi
 
