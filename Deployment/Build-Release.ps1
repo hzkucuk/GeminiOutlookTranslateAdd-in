@@ -21,9 +21,9 @@ $ErrorActionPreference = "Stop"
 # YAPILANDIRMA
 # =====================================================
 
-$SolutionRoot     = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
-if (-not (Test-Path (Join-Path $SolutionRoot "GeminiOutlookTranslateAdd-in.sln"))) {
-    $SolutionRoot = Split-Path -Parent $PSScriptRoot
+$SolutionRoot = Split-Path -Parent $PSScriptRoot
+if (-not (Test-Path (Join-Path $SolutionRoot "GeminiOutlookTranslateAdd-in.slnx"))) {
+    $SolutionRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 }
 
 $AssemblyInfoPath = Join-Path $SolutionRoot "GeminiOutlookTranslateAdd-in\Properties\AssemblyInfo.cs"
@@ -152,36 +152,48 @@ if ($hasErrors) {
 }
 
 # =====================================================
-# ADIM 3: BUILD (Release)
+# ADIM 3: BUILD (Release) — VSTO icin devenv.exe kullanilir
 # =====================================================
 
 Write-Step "3/7" "Release build"
 
-$msbuildPaths = @(
-    "${env:ProgramFiles}\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe",
-    "${env:ProgramFiles}\Microsoft Visual Studio\2022\Professional\MSBuild\Current\Bin\MSBuild.exe",
-    "${env:ProgramFiles}\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\MSBuild.exe",
-    "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe"
+$devenvPaths = @(
+    "${env:ProgramFiles}\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.exe",
+    "${env:ProgramFiles}\Microsoft Visual Studio\2022\Professional\Common7\IDE\devenv.exe",
+    "${env:ProgramFiles}\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\devenv.exe"
 )
 
-$msbuild = $null
-foreach ($p in $msbuildPaths) {
-    if (Test-Path $p) { $msbuild = $p; break }
+$devenv = $null
+foreach ($p in $devenvPaths) {
+    if (Test-Path $p) { $devenv = $p; break }
 }
 
-if (-not $msbuild) {
-    Write-Fail "MSBuild bulunamadi! Visual Studio yuklu mu?"
+if (-not $devenv) {
+    Write-Fail "Visual Studio bulunamadi!"
     exit 1
 }
 
-Write-Host "   MSBuild: $msbuild" -ForegroundColor Gray
+Write-Host "   DevEnv: $devenv" -ForegroundColor Gray
 
-$slnPath = Join-Path $SolutionRoot "GeminiOutlookTranslateAdd-in.sln"
-$buildResult = & $msbuild $slnPath /p:Configuration=Release /p:Platform="Any CPU" /t:Publish /v:minimal 2>&1
+# .slnx veya .sln bul
+$slnFile = Get-ChildItem $SolutionRoot -Filter "*.slnx" -File | Select-Object -First 1
+if (-not $slnFile) {
+    $slnFile = Get-ChildItem $SolutionRoot -Filter "*.sln" -File | Select-Object -First 1
+}
+if (-not $slnFile) {
+    Write-Fail "Solution dosyasi bulunamadi!"
+    exit 1
+}
 
-if ($LASTEXITCODE -ne 0) {
+Write-Host "   Solution: $($slnFile.Name)" -ForegroundColor Gray
+
+# devenv /build Release + Publish
+$buildLog = Join-Path $env:TEMP "GeminiBuild.log"
+$buildProcess = Start-Process -FilePath $devenv -ArgumentList "`"$($slnFile.FullName)`" /build Release /out `"$buildLog`"" -Wait -PassThru -NoNewWindow
+
+if ($buildProcess.ExitCode -ne 0) {
     Write-Fail "Build basarisiz!"
-    $buildResult | Write-Host
+    if (Test-Path $buildLog) { Get-Content $buildLog | Write-Host }
     exit 1
 }
 

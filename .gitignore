@@ -16,6 +16,7 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
+UpgradeLog.htm
 
 # ------ Visual Studio ------
 .vs/
