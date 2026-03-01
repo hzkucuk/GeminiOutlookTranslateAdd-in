@@ -1,0 +1,95 @@
+﻿═══════════════════════════════════════════════════════════════
+    GEMINI OUTLOOK TRANSLATE ADD-IN v1.0
+    Zafer Bilgisayar by Auto-System
+═══════════════════════════════════════════════════════════════
+
+📦 CLICKONCE KURULUM REHBERİ
+────────────────────────────────────────────────────────────────
+
+🔧 GEREKSİNİMLER:
+  ✓ Windows 10/11
+  ✓ Microsoft Outlook 2016/2019/2021/365
+  ✓ .NET Framework 4.8
+  ✓ Visual Studio 2010 Tools for Office Runtime
+  ✓ Gemini API Key (https://aistudio.google.com/apikey)
+
+────────────────────────────────────────────────────────────────
+
+📥 KURULUM ADIMLARI:
+
+1️⃣  OUTLOOK'U KAPAT
+    • Tüm Outlook pencerelerini kapatın
+    • Task Manager'da Outlook.exe olmadığından emin olun
+
+2️⃣  SETUP.EXE'Yİ ÇALIŞTIR
+    • setup.exe dosyasına çift tıklayın
+    • "Install" butonuna tıklayın
+    • Güvenlik uyarısı çıkarsa "Install" deyin
+
+3️⃣  OUTLOOK'U BAŞLAT
+    • Outlook'u açın
+    • Ribbon'da "Çeviri" tabını göreceksiniz
+
+4️⃣  API KEY GİR
+    • "Çeviri" tabında API Key alanına Gemini API Key'inizi girin
+    • "Kaydet" butonuna tıklayın
+    • "✓ API Key kayıtlı" mesajını görmelisiniz
+
+────────────────────────────────────────────────────────────────
+
+🎯 KULLANIM:
+
+📧 MAİL ÇEVİRİSİ:
+  1. Çevirmek istediğiniz mail'i açın
+  2. "Çeviri" tabında:
+     • "Türkçe → İngilizce" veya
+     • "İngilizce → Türkçe" butonuna tıklayın
+  3. 3-4 saniye bekleyin
+  4. Mail otomatik çevrilecek!
+
+✨ ÖZELLİKLER:
+  ✓ Otomatik Türkçe imla düzeltme
+  ✓ Noktalama ekleme (? ! . ,)
+  ✓ HTML formatını koruma
+  ✓ Orijinal metni saklama
+  ✓ Kısaltmaları koruma (HZK, CEO, API)
+  ✓ İptal butonu
+  ✓ 8000 karakter limiti
+
+────────────────────────────────────────────────────────────────
+
+⚠️  SORUN GİDERME:
+
+❌ "API Key kayıtlı değil" hatası:
+  → Çeviri tabında API Key girin ve kaydedin
+
+❌ "Çeviri başarısız oldu" hatası:
+  → İnternet bağlantınızı kontrol edin
+  → API Key'in geçerli olduğundan emin olun
+
+❌ "Çeviri" tabı görünmüyor:
+  → File → Options → Add-ins → Manage: COM Add-ins
+  → "Gemini Translate" işaretli olmalı
+
+❌ Güvenlik uyarısı:
+  → File → Options → Trust Center → Trust Center Settings
+  → Trusted Locations → Add-in klasörünü ekleyin
+
+────────────────────────────────────────────────────────────────
+
+🗑️  KALDIRMA:
+
+1. Outlook'u kapatın
+2. Windows → Settings → Apps & features
+3. "Gemini Outlook Translate Add-in" bulun
+4. "Uninstall" tıklayın
+
+────────────────────────────────────────────────────────────────
+
+📞 DESTEK:
+  E-posta: hzkucuk@zaferbilgisayar.com
+  Web: https://www.zaferbilgisayar.com
+
+═══════════════════════════════════════════════════════════════
+            © 2025 Zafer Bilgisayar - Auto-System
+═══════════════════════════════════════════════════════════════

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <appSettings>
+    <!-- 
+      ============================================
+      GÜVENLÝK UYARISI: API KEY BURAYA YAZMAYIN!
+      ============================================
+      
+      v1.1.0+ sürümünde API key artýk App.config'de tutulmuyor.
+      
+      API key'i Outlook Ribbon üzerinden kaydedin:
+      1. Outlook'u açýn
+      2. Mail sekmesi ? Gemini Çeviri grubu
+      3. API Key metin kutusuna anahtarýnýzý yapýþtýrýn
+      4. Kaydet butonuna basýn
+      
+      API key Windows Registry'de AES-256 ile þifrelenir.
+      Konum: HKEY_CURRENT_USER\Software\ZaferBilgisayar\GeminiTranslate
+    -->
+    
+    <!-- 
+      Gemini Model Yapýlandýrmasý (Opsiyonel)
+      
+      ? ÖNERÝLEN: Model belirtilmezse API'den otomatik algýlanýr.
+      
+      Manuel model seçmek isterseniz aþaðýdaki satýrýn comment'ini kaldýrýn:
+      
+      Örnek:
+      <add key="GeminiModel" value="gemini-1.5-flash" />
+      
+      Desteklenen modeller:
+      - gemini-2.0-flash-exp (en yeni, deneysel - çok hýzlý)
+      - gemini-1.5-flash (kararlý, hýzlý - önerilen)
+      - gemini-1.5-pro (geliþmiþ, daha yavaþ ama en kaliteli)
+    -->
+    
+    <!-- Otomatik model algýlama için comment'li býrakýn -->
+    <!-- <add key="GeminiModel" value="gemini-1.5-flash" /> -->
+    
+  </appSettings>
+</configuration>
