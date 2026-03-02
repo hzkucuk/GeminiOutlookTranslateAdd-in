@@ -187,7 +187,7 @@ if (-not $slnFile) {
 
 Write-Host "   Solution: $($slnFile.Name)" -ForegroundColor Gray
 
-# devenv /build Release + Publish
+# devenv /build Release
 $buildLog = Join-Path $env:TEMP "GeminiBuild.log"
 $buildProcess = Start-Process -FilePath $devenv -ArgumentList "`"$($slnFile.FullName)`" /build Release /out `"$buildLog`"" -Wait -PassThru -NoNewWindow
 
@@ -198,6 +198,44 @@ if ($buildProcess.ExitCode -ne 0) {
 }
 
 Write-OK "Release build basarili"
+
+# ClickOnce Publish (app.publish klasorunu gunceller)
+Write-Host "   ClickOnce Publish yapiliyor..." -ForegroundColor Gray
+$publishLog = Join-Path $env:TEMP "GeminiPublish.log"
+$publishProcess = Start-Process -FilePath $devenv -ArgumentList "`"$($slnFile.FullName)`" /publish Release /out `"$publishLog`"" -Wait -PassThru -NoNewWindow
+
+if ($publishProcess.ExitCode -ne 0) {
+    Write-Host "   UYARI: devenv /publish basarisiz, MSBuild Publish deneniyor..." -ForegroundColor Yellow
+
+    # Fallback: MSBuild ile publish
+    $msbuildPaths = @(
+        "${env:ProgramFiles}\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe",
+        "${env:ProgramFiles}\Microsoft Visual Studio\2022\Professional\MSBuild\Current\Bin\MSBuild.exe",
+        "${env:ProgramFiles}\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\MSBuild.exe"
+    )
+    $msbuild = $null
+    foreach ($mp in $msbuildPaths) {
+        if (Test-Path $mp) { $msbuild = $mp; break }
+    }
+
+    if ($msbuild) {
+        $csprojFile = Join-Path $SolutionRoot "GeminiOutlookTranslateAdd-in\GeminiOutlookTranslateAdd-in.csproj"
+        & $msbuild $csprojFile /t:Publish /p:Configuration=Release /p:PublishDir="bin\Release\app.publish\" /v:minimal 2>&1 | Out-Null
+    }
+}
+
+Write-OK "ClickOnce Publish tamamlandi"
+
+# Dogrulama: app.publish DLL versiyonu kontrol et
+$publishedDll = Get-ChildItem $PublishDir -Recurse -Filter "GeminiOutlookTranslateAdd-in.dll.deploy" | Select-Object -First 1
+if ($publishedDll) {
+    $dllVer = [System.Reflection.Assembly]::LoadFrom($publishedDll.FullName).GetName().Version
+    Write-Host "   Publish DLL versiyon: $dllVer" -ForegroundColor Gray
+    if ("$($dllVer.Major).$($dllVer.Minor).$($dllVer.Build)" -ne $version) {
+        Write-Fail "UYARI: Publish DLL versiyonu ($dllVer) beklenen ($version) ile eslesmiyor!"
+        Write-Host "   Outlook'u kapatin, tekrar calistirin." -ForegroundColor Yellow
+    }
+}
 
 # =====================================================
 # ADIM 4: ZIP OLUSTURMA
