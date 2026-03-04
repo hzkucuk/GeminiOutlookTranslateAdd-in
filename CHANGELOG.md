@@ -5,6 +5,21 @@ Format [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) standardina uygu
 
 ---
 
+## [1.4.1] - 2025-07-25
+
+### Eklenenler
+- **Sertifika dahil:** ZIP paketine imza sertifikasi (.cer) eklendi — baska makinelerde bloklanma onlendi
+- **Kurulum rehberi:** KURULUM-REHBERI.txt sertifika adimi ile guncellendi
+- **Build pipeline:** ZIP paketine .cer dosyasi otomatik dahil ediliyor
+
+### Etkilenen Dosyalar
+- `Deployment/GeminiTranslate-CodeSigning.cer` (yeni)
+- `Deployment/Kur-Sertifika-ve-Addin.bat`
+- `Deployment/Build-Release.ps1`
+- `Deployment/KURULUM-REHBERI.txt`
+
+---
+
 ## [1.4.0] - 2025-07-25
 
 ### Duzeltmeler

@@ -1,5 +1,5 @@
-﻿═══════════════════════════════════════════════════════════════
-    GEMINI OUTLOOK TRANSLATE ADD-IN v1.0
+═══════════════════════════════════════════════════════════════
+    GEMINI OUTLOOK TRANSLATE ADD-IN v1.4.1
     Zafer Bilgisayar by Auto-System
 ═══════════════════════════════════════════════════════════════
 
@@ -17,20 +17,33 @@
 
 📥 KURULUM ADIMLARI:
 
+   ÖNEMLİ: Aşağıdaki 2 yöntemden birini kullanabilirsiniz.
+   En kolay yöntem: "Kur-Sertifika-ve-Addin.bat" dosyasını
+   sağ tıklayıp "Yönetici olarak çalıştır" seçmektir.
+   Bu dosya sertifikayı kurar ve ardından setup.exe'yi başlatır.
+
+   VEYA aşağıdaki adımları takip edin:
+
 1️⃣  OUTLOOK'U KAPAT
     • Tüm Outlook pencerelerini kapatın
     • Task Manager'da Outlook.exe olmadığından emin olun
 
-2️⃣  SETUP.EXE'Yİ ÇALIŞTIR
+2️⃣  SERTİFİKA KUR (ÖNCELİKLİ - BLOKLANMAYI ÖNLER)
+    • "Kur-Sertifika-ve-Addin.bat" dosyasına sağ tıklayın
+    • "Yönetici olarak çalıştır" seçin
+    • UAC uyarısında "Evet" deyin
+    • Sertifika otomatik olarak güvenilir listeye eklenir
+    • NOT: Bu adım yapılmazsa Outlook eklentiyi bloklar!
+
+3️⃣  SETUP.EXE'Yİ ÇALIŞTIR (bat yapmadıysa)
     • setup.exe dosyasına çift tıklayın
     • "Install" butonuna tıklayın
-    • Güvenlik uyarısı çıkarsa "Install" deyin
 
-3️⃣  OUTLOOK'U BAŞLAT
+4️⃣  OUTLOOK'U BAŞLAT
     • Outlook'u açın
     • Ribbon'da "Çeviri" tabını göreceksiniz
 
-4️⃣  API KEY GİR
+5️⃣  API KEY GİR
     • "Çeviri" tabında API Key alanına Gemini API Key'inizi girin
     • "Kaydet" butonuna tıklayın
     • "✓ API Key kayıtlı" mesajını görmelisiniz
@@ -71,9 +84,10 @@
   → File → Options → Add-ins → Manage: COM Add-ins
   → "Gemini Translate" işaretli olmalı
 
-❌ Güvenlik uyarısı:
-  → File → Options → Trust Center → Trust Center Settings
-  → Trusted Locations → Add-in klasörünü ekleyin
+❌ Güvenlik uyarısı / Eklenti bloklandı:
+   → "Kur-Sertifika-ve-Addin.bat" dosyasını Yönetici olarak çalıştırın
+   → Bu, imza sertifikasını güvenilir listeye ekler
+   → Outlook'u yeniden başlatın
 
 ────────────────────────────────────────────────────────────────
 
@@ -91,5 +105,5 @@
   Web: https://www.zaferbilgisayar.com
 
 ═══════════════════════════════════════════════════════════════
-            © 2025 Zafer Bilgisayar - Auto-System
+            © 2026 Zafer Bilgisayar - Auto-System
 ═══════════════════════════════════════════════════════════════

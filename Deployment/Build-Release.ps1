@@ -199,42 +199,16 @@ if ($buildProcess.ExitCode -ne 0) {
 
 Write-OK "Release build basarili"
 
-# ClickOnce Publish (app.publish klasorunu gunceller)
-Write-Host "   ClickOnce Publish yapiliyor..." -ForegroundColor Gray
-$publishLog = Join-Path $env:TEMP "GeminiPublish.log"
-$publishProcess = Start-Process -FilePath $devenv -ArgumentList "`"$($slnFile.FullName)`" /publish Release /out `"$publishLog`"" -Wait -PassThru -NoNewWindow
-
-if ($publishProcess.ExitCode -ne 0) {
-    Write-Host "   UYARI: devenv /publish basarisiz, MSBuild Publish deneniyor..." -ForegroundColor Yellow
-
-    # Fallback: MSBuild ile publish
-    $msbuildPaths = @(
-        "${env:ProgramFiles}\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe",
-        "${env:ProgramFiles}\Microsoft Visual Studio\2022\Professional\MSBuild\Current\Bin\MSBuild.exe",
-        "${env:ProgramFiles}\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\MSBuild.exe"
-    )
-    $msbuild = $null
-    foreach ($mp in $msbuildPaths) {
-        if (Test-Path $mp) { $msbuild = $mp; break }
+# Dogrulama: DLL versiyonu kontrol et
+$builtDll = Join-Path $SolutionRoot "GeminiOutlookTranslateAdd-in\bin\Release\GeminiOutlookTranslateAdd-in.dll"
+if (Test-Path $builtDll) {
+    $dllVer = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($builtDll)
+    Write-Host "   DLL versiyon: $($dllVer.FileVersion)" -ForegroundColor Gray
+    if ($dllVer.FileVersion -ne "$version.0") {
+        Write-Fail "DLL versiyonu ($($dllVer.FileVersion)) beklenen ($version.0) ile eslesmiyor!"
+        exit 1
     }
-
-    if ($msbuild) {
-        $csprojFile = Join-Path $SolutionRoot "GeminiOutlookTranslateAdd-in\GeminiOutlookTranslateAdd-in.csproj"
-        & $msbuild $csprojFile /t:Publish /p:Configuration=Release /p:PublishDir="bin\Release\app.publish\" /v:minimal 2>&1 | Out-Null
-    }
-}
-
-Write-OK "ClickOnce Publish tamamlandi"
-
-# Dogrulama: app.publish DLL versiyonu kontrol et
-$publishedDll = Get-ChildItem $PublishDir -Recurse -Filter "GeminiOutlookTranslateAdd-in.dll.deploy" | Select-Object -First 1
-if ($publishedDll) {
-    $dllVer = [System.Reflection.Assembly]::LoadFrom($publishedDll.FullName).GetName().Version
-    Write-Host "   Publish DLL versiyon: $dllVer" -ForegroundColor Gray
-    if ("$($dllVer.Major).$($dllVer.Minor).$($dllVer.Build)" -ne $version) {
-        Write-Fail "UYARI: Publish DLL versiyonu ($dllVer) beklenen ($version) ile eslesmiyor!"
-        Write-Host "   Outlook'u kapatin, tekrar calistirin." -ForegroundColor Yellow
-    }
+    Write-OK "DLL versiyon dogrulandi"
 }
 
 # =====================================================
@@ -258,20 +232,22 @@ if (-not $SkipZip) {
     if (Test-Path $tempDir) { Remove-Item $tempDir -Recurse -Force }
     New-Item -ItemType Directory -Path $tempDir -Force | Out-Null
 
-    # Publish ciktilari
-    if (Test-Path $PublishDir) {
-        Copy-Item "$PublishDir\*" $tempDir -Recurse -Force
-        Write-Host "   Publish dosyalari eklendi" -ForegroundColor Gray
+    # bin\Release ciktilari (VSTO eklenti dosyalari)
+    $binRelease = Join-Path $SolutionRoot "GeminiOutlookTranslateAdd-in\bin\Release"
+    $vstoFiles = @("*.vsto", "*.dll", "*.dll.manifest", "*.dll.config")
+    foreach ($pattern in $vstoFiles) {
+        Get-ChildItem $binRelease -Filter $pattern -File | ForEach-Object {
+            Copy-Item $_.FullName $tempDir -Force
+        }
     }
-    else {
-        Write-Fail "Publish klasoru bulunamadi: $PublishDir"
-        exit 1
-    }
+    Write-Host "   VSTO dosyalari eklendi (bin\Release)" -ForegroundColor Gray
 
     # Deployment yardimci dosyalari
     $deployFiles = @(
+        "KUR.bat",
         "Kur-Sertifika-ve-Addin.bat",
         "Install-Certificate.ps1",
+        "GeminiTranslate-CodeSigning.cer",
         "KURULUM-REHBERİ.txt"
     )
     foreach ($f in $deployFiles) {
