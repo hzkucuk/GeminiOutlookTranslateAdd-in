@@ -124,9 +124,6 @@ App.Release.config
 # Log dosyalari
 *.log
 
-# Copilot instructions (yerel gelistirici ayarlari)
-.github/copilot-instructions.md
-
 # Release ZIP arsivleri (GitHub Releases uzerinden dagitilir)
 *.zip
 
