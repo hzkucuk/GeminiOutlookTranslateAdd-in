@@ -9,11 +9,17 @@ Format [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) standardina uygu
 
 ### Eklenenler
 - **Sertifika dahil:** ZIP paketine imza sertifikasi (.cer) eklendi — baska makinelerde bloklanma onlendi
+- **MSI installer:** WiX 6 ile MSI paketi eklendi — sertifika + registry otomatik kurulum
+- **KUR.bat:** Tek tikla kurulum (otomatik UAC yetki yukseltme)
 - **Kurulum rehberi:** KURULUM-REHBERI.txt sertifika adimi ile guncellendi
-- **Build pipeline:** ZIP paketine .cer dosyasi otomatik dahil ediliyor
+- **Build pipeline:** ZIP + MSI paketleri otomatik olusturuluyor
 
 ### Etkilenen Dosyalar
 - `Deployment/GeminiTranslate-CodeSigning.cer` (yeni)
+- `Deployment/KUR.bat` (yeni)
+- `Deployment/MSI/GeminiTranslate.wxs` (yeni)
+- `Deployment/MSI/Build-MSI.ps1` (yeni)
+- `Deployment/MSI/install-cert.cmd` (yeni)
 - `Deployment/Kur-Sertifika-ve-Addin.bat`
 - `Deployment/Build-Release.ps1`
 - `Deployment/KURULUM-REHBERI.txt`

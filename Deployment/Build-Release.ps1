@@ -273,6 +273,29 @@ else {
 }
 
 # =====================================================
+# ADIM 4b: MSI OLUSTURMA (WiX)
+# =====================================================
+
+$msiScript = Join-Path $DeploymentDir "MSI\Build-MSI.ps1"
+if (Test-Path $msiScript) {
+    Write-Step "4b/7" "MSI paketi olusturuluyor (WiX)"
+
+    $wixCmd = Get-Command wix -ErrorAction SilentlyContinue
+    if ($wixCmd) {
+        & $msiScript
+        if ($LASTEXITCODE -eq 0) {
+            Write-OK "MSI paketi olusturuldu"
+        }
+        else {
+            Write-Host "   UYARI: MSI olusturulamadi, devam ediliyor..." -ForegroundColor Yellow
+        }
+    }
+    else {
+        Write-Host "   [ATLA] WiX CLI bulunamadi (dotnet tool install --global wix)" -ForegroundColor DarkGray
+    }
+}
+
+# =====================================================
 # ADIM 5: GIT STAGED KONTROLU
 # =====================================================
 

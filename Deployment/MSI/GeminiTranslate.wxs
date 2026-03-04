@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+
+  <Package Name="Gemini Outlook Translate Add-in"
+           Manufacturer="Zafer Bilgisayar"
+           Version="$(var.Version)"
+           UpgradeCode="97D0CDFA-7B70-4582-A145-31E22B4356A7"
+           Scope="perMachine"
+           InstallerVersion="500">
+
+    <SummaryInformation Description="Google Gemini AI destekli Outlook e-posta ceviri eklentisi" />
+
+    <MajorUpgrade DowngradeErrorMessage="Daha yeni bir surum zaten yuklu. Once onu kaldirin." />
+    <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
+
+    <!-- ============================================= -->
+    <!-- Feature -->
+    <!-- ============================================= -->
+    <Feature Id="MainFeature" Title="Gemini Translate Add-in" Level="1">
+      <ComponentGroupRef Id="AddinFiles" />
+      <ComponentRef Id="CertificateFile" />
+      <ComponentRef Id="CertInstallScript" />
+      <ComponentRef Id="OutlookAddinRegistry" />
+    </Feature>
+
+    <!-- ============================================= -->
+    <!-- Custom Action: Sertifika Kurulumu -->
+    <!-- Kurulum sirasinda certutil ile sertifikayi   -->
+    <!-- Root ve TrustedPublisher store'a yukler.      -->
+    <!-- ============================================= -->
+
+    <CustomAction Id="RunInstallCert"
+                  Directory="INSTALLFOLDER"
+                  ExeCommand="[SystemFolder]cmd.exe /c install-cert.cmd"
+                  Return="ignore" />
+
+    <InstallExecuteSequence>
+      <Custom Action="RunInstallCert" After="InstallFiles" Condition="NOT Installed" />
+    </InstallExecuteSequence>
+
+  </Package>
+
+  <!-- ============================================= -->
+  <!-- Dizin Yapisi -->
+  <!-- ============================================= -->
+  <Fragment>
+    <StandardDirectory Id="ProgramFilesFolder">
+      <Directory Id="COMPANYDIR" Name="Zafer Bilgisayar">
+        <Directory Id="INSTALLFOLDER" Name="Gemini Translate" />
+      </Directory>
+    </StandardDirectory>
+  </Fragment>
+
+  <!-- ============================================= -->
+  <!-- VSTO Eklenti Dosyalari -->
+  <!-- ============================================= -->
+  <Fragment>
+    <ComponentGroup Id="AddinFiles" Directory="INSTALLFOLDER">
+      <Component Id="MainDll" Guid="*">
+        <File Id="MainDll" Source="$(var.BinDir)\GeminiOutlookTranslateAdd-in.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="VstoFile" Guid="*">
+        <File Source="$(var.BinDir)\GeminiOutlookTranslateAdd-in.vsto" KeyPath="yes" />
+      </Component>
+      <Component Id="DllManifest" Guid="*">
+        <File Source="$(var.BinDir)\GeminiOutlookTranslateAdd-in.dll.manifest" KeyPath="yes" />
+      </Component>
+      <Component Id="DllConfig" Guid="*">
+        <File Source="$(var.BinDir)\GeminiOutlookTranslateAdd-in.dll.config" KeyPath="yes" />
+      </Component>
+      <Component Id="HtmlAgilityPack" Guid="*">
+        <File Source="$(var.BinDir)\HtmlAgilityPack.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="NewtonsoftJson" Guid="*">
+        <File Source="$(var.BinDir)\Newtonsoft.Json.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="OfficeToolsCommon" Guid="*">
+        <File Source="$(var.BinDir)\Microsoft.Office.Tools.Common.v4.0.Utilities.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="OfficeToolsOutlook" Guid="*">
+        <File Source="$(var.BinDir)\Microsoft.Office.Tools.Outlook.v4.0.Utilities.dll" KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+
+  <!-- ============================================= -->
+  <!-- Sertifika + Kurulum Scripti + Registry -->
+  <!-- ============================================= -->
+  <Fragment>
+    <Component Id="CertificateFile" Directory="INSTALLFOLDER" Guid="*">
+      <File Source="$(var.CertDir)\GeminiTranslate-CodeSigning.cer" KeyPath="yes" />
+    </Component>
+
+    <Component Id="CertInstallScript" Directory="INSTALLFOLDER" Guid="*">
+      <File Source="$(var.ScriptDir)\install-cert.cmd" KeyPath="yes" />
+    </Component>
+
+    <Component Id="OutlookAddinRegistry" Directory="INSTALLFOLDER" Guid="*">
+      <RegistryKey Root="HKCU"
+                   Key="Software\Microsoft\Office\Outlook\Addins\GeminiOutlookTranslateAdd-in">
+        <RegistryValue Type="string" Name="FriendlyName"
+                       Value="Gemini Outlook Translate Add-in" KeyPath="yes" />
+        <RegistryValue Type="string" Name="Description"
+                       Value="Gemini AI destekli Outlook e-posta ceviri eklentisi" />
+        <RegistryValue Type="integer" Name="LoadBehavior" Value="3" />
+        <RegistryValue Type="string" Name="Manifest"
+                       Value="file:///[INSTALLFOLDER]GeminiOutlookTranslateAdd-in.vsto|vstolocal" />
+      </RegistryKey>
+    </Component>
+  </Fragment>
+
+</Wix>
