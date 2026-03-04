@@ -8,10 +8,13 @@
 [![Outlook VSTO](https://img.shields.io/badge/Outlook-VSTO%20Add--in-0078D4?logo=microsoftoutlook)](https://learn.microsoft.com/tr-tr/visualstudio/vsto/)
 [![Gemini API](https://img.shields.io/badge/Google-Gemini%20API-4285F4?logo=google)](https://aistudio.google.com/)
 [![Lisans](https://img.shields.io/badge/Lisans-MIT-green)](LICENSE)
+[![Sürüm](https://img.shields.io/badge/S%C3%BCr%C3%BCm-1.4.1-orange)](CHANGELOG.md)
 
 <br/>
 
 Türkçe ↔ İngilizce çift yönlü çeviri · Otomatik imla düzeltme · HTML format koruma · AES-256 şifreleme
+
+[📦 MSI İndir](https://github.com/hzkucuk/GeminiOutlookTranslateAdd-in/releases) · [📁 ZIP İndir](https://github.com/hzkucuk/GeminiOutlookTranslateAdd-in/releases)
 
 </div>
 
@@ -86,40 +89,48 @@ Türkçe ↔ İngilizce çift yönlü çeviri · Otomatik imla düzeltme · HTML
 
 ## 🚀 Kurulum
 
-### 1. Projeyi Klonlayın
+İki kurulum yöntemi mevcuttur:
+
+### Yöntem 1 — MSI Installer (Önerilen)
+
+1. [Releases](https://github.com/hzkucuk/GeminiOutlookTranslateAdd-in/releases) sayfasından `GeminiTranslate-v*-setup.msi` dosyasını indirin
+2. MSI dosyasını çift tıklayarak çalıştırın
+3. Kurulum sihirbazını takip edin
+
+> MSI, imza sertifikasını ve Outlook registry kaydını **otomatik** yapar.
+
+### Yöntem 2 — ZIP Paketi
+
+1. [Releases](https://github.com/hzkucuk/GeminiOutlookTranslateAdd-in/releases) sayfasından `*-setup.zip` dosyasını indirin
+2. ZIP'i bir klasöre çıkarın
+3. **`KUR.bat`** dosyasına çift tıklayın (yönetici izni otomatik istenir)
+
+`KUR.bat` şunları yapar:
+- Sertifikayı Trusted Root + Trusted Publisher store'a yükler
+- VSTOInstaller ile eklentiyi Outlook'a kaydeder
+
+### API Anahtarı Kaydetme
+
+> ⚠️ API anahtarı `App.config` dosyasında **tutulmaz**. Ribbon üzerinden kaydedin.
+
+1. Outlook'u açın (yeniden başlatmanız gerekebilir)
+2. Herhangi bir mail açın
+3. **Eklentiler** sekmesinde **"Zafer Bilgisayar Çeviri"** grubunu bulun
+4. **API Key** metin kutusuna [Google AI Studio](https://aistudio.google.com/) üzerinden aldığınız anahtarı yapıştırın
+5. **Kaydet** butonuna tıklayın
+6. ✅ *"API Key başarıyla kaydedildi ve şifrelendi"* mesajını görmelisiniz
+
+### Geliştirici Kurulumu (Kaynak Koddan)
 
 ```bash
 git clone https://github.com/hzkucuk/GeminiOutlookTranslateAdd-in.git
 cd GeminiOutlookTranslateAdd-in
-```
-
-### 2. App.config Dosyasını Oluşturun
-
-Proje güvenlik nedeniyle `App.config` dosyasını Git'e dahil etmez. Şablondan oluşturun:
-
-```bash
 copy GeminiOutlookTranslateAdd-in\App.config.template GeminiOutlookTranslateAdd-in\App.config
 ```
 
-### 3. Derleyin ve Çalıştırın
-
-1. Visual Studio'da `GeminiOutlookTranslateAdd-in.sln` dosyasını açın
+1. Visual Studio 2022'de `GeminiOutlookTranslateAdd-in.slnx` dosyasını açın
 2. NuGet paketlerinin geri yüklenmesini bekleyin
 3. **F5** ile debug modunda başlatın — Outlook otomatik açılacaktır
-
-### 4. API Anahtarı Kaydedin
-
-> ⚠️ API anahtarı `App.config` dosyasında **tutulmaz**. Ribbon üzerinden kaydedin.
-
-1. Outlook'ta herhangi bir mail açın
-2. **Eklentiler** sekmesinde **"Zafer Bilgisayar Çeviri"** grubunu bulun
-3. **API Key** metin kutusuna anahtarınızı yapıştırın
-4. **Kaydet** butonuna tıklayın
-5. ✅ *"API Key başarıyla kaydedildi ve şifrelendi"* mesajını görmelisiniz
-
-### 5. Güvenilirlik Sorunu (İsteğe Bağlı)
-
-Kurulum sırasında ClickOnce güvenilirlik uyarısı alırsanız, `FixVSTOTrust.ps1` betiğini **yönetici olarak** çalıştırın.
 
 ---
 
@@ -239,11 +250,21 @@ GeminiOutlookTranslateAdd-in/
 ├── ThisAddIn.cs                 # VSTO giriş noktası
 ├── ThisAddIn.Designer.cs        # VSTO tasarımcı (otomatik üretilir)
 ├── App.config.template          # Yapılandırma şablonu
-├── FixVSTOTrust.ps1             # ClickOnce güvenilirlik betiği
 └── Properties/
-    ├── AssemblyInfo.cs           # Derleme bilgileri
+    ├── AssemblyInfo.cs           # Derleme bilgileri (versiyon kaynağı)
     ├── Resources.resx            # Gömülü kaynaklar
     └── Settings.settings         # Uygulama ayarları
+
+Deployment/
+├── Build-Release.ps1            # Otomatik release pipeline (ZIP + MSI + Git)
+├── GeminiTranslate-CodeSigning.cer  # İmza sertifikası (public)
+├── KUR.bat                      # Son kullanıcı tek-tık kurulum
+├── Kur-Sertifika-ve-Addin.bat   # Sertifika + eklenti kurulum
+├── KURULUM-REHBERİ.txt          # Kurulum kılavuzu
+└── MSI/
+    ├── GeminiTranslate.wxs      # WiX 6 MSI tanımı
+    ├── Build-MSI.ps1            # MSI derleme scripti
+    └── install-cert.cmd         # Sertifika kurulum komutu
 ```
 
 ### Kod Mimarisi
@@ -328,12 +349,32 @@ Remove-Item -Path "HKCU:\Software\ZaferBilgisayar\GeminiTranslate" -Recurse -For
 
 Ardından Ribbon'dan yeniden kaydedin.
 
-### Release Build Başarısız Oluyor
+### Sertifika / Güvenilirlik Sorunu
 
-`app.publish` klasörü kilitlenmiş olabilir. Outlook'u kapatıp şunu çalıştırın:
+Outlook eklentiyi blokluyor veya güvenilirlik uyarısı veriyorsa:
+
+1. **MSI ile kurdunuz:** Sertifika otomatik yüklenir, Outlook'u yeniden başlatın
+2. **ZIP ile kurdunuz:** `KUR.bat`'ı yönetici olarak çalıştırın
+3. **Manuel çözüm:** PowerShell'i yönetici olarak açın:
 
 ```powershell
-Remove-Item -Path "GeminiOutlookTranslateAdd-in\bin\Release\app.publish" -Recurse -Force
+certutil -addstore Root "GeminiTranslate-CodeSigning.cer"
+certutil -addstore TrustedPublisher "GeminiTranslate-CodeSigning.cer"
+```
+
+### Eklenti Outlook'ta Görünmüyor
+
+1. Outlook → **Dosya** → **Seçenekler** → **Eklentiler**
+2. "Devre Dışı Bırakılan Uygulama Eklentileri" listesini kontrol edin
+3. Eklenti oradaysa **Etkinleştir** butonuna tıklayın
+4. Outlook'u yeniden başlatın
+
+### Release Build
+
+Otomatik pipeline için:
+
+```powershell
+.\Deployment\Build-Release.ps1
 ```
 
 ---
@@ -372,8 +413,8 @@ Copyright (c) 2025 Zafer Bilgisayar
 
 <div align="center">
 
-**Zafer Bilgisayar** tarafindan gelistirilmistir.
+**Zafer Bilgisayar** tarafından geliştirilmiştir.
 
-[🐛 Hata Bildir](https://github.com/hzkucuk/GeminiOutlookTranslateAdd-in/issues) · [💡 Özellik İste](https://github.com/hzkucuk/GeminiOutlookTranslateAdd-in/issues)
+Sürüm 1.4.1 · [📋 Değişiklik Günlüğü](CHANGELOG.md) · [🐛 Hata Bildir](https://github.com/hzkucuk/GeminiOutlookTranslateAdd-in/issues) · [💡 Özellik İste](https://github.com/hzkucuk/GeminiOutlookTranslateAdd-in/issues)
 
 </div>
